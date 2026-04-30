@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ employee.full_name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('hr.employees') }}">Employees</a></li><li class="breadcrumb-item active">{{ employee.full_name }}</li></ol></nav>
+    <h1 class="page-title">{{ employee.full_name }}</h1>
+    <p class="page-subtitle">{{ employee.designation or 'Staff' }} · {{ employee.employee_id }}</p>
+  </div>
+  <a href="{{ url_for('hr.edit_employee', emp_id=employee.id) }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+</div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="profile-card">
+      <div class="profile-card-header" style="background:linear-gradient(135deg,#0f172a,#7f1d1d,#ef4444)">
+        <div class="profile-avatar">{{ employee.first_name[0] }}</div>
+        <h4>{{ employee.full_name }}</h4>
+        <p>{{ employee.designation or 'Staff' }}</p>
+      </div>
+      <div class="profile-card-body">
+        <div class="info-row"><span class="info-label">Employee ID</span><span class="info-value fw-600"><code>{{ employee.employee_id }}</code></span></div>
+        <div class="info-row"><span class="info-label">Department</span><span class="info-value">{{ employee.department.name if employee.department else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Type</span><span class="info-value">{{ employee.employment_type | title }}</span></div>
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ employee.phone or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ employee.email or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Joined</span><span class="info-value">{{ employee.joining_date.strftime('%b %d, %Y') if employee.joining_date else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Salary</span><span class="info-value fw-600 text-success">${{ '{:,.0f}'.format(employee.basic_salary) }}</span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="status-pill {{ employee.status }}">{{ employee.status | title }}</span></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-calendar-minus me-2 text-warning"></i>Leave Requests</h5></div>
+      <div class="table-responsive"><table class="table">
+        <thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for l in leaves %}
+          <tr><td><span class="badge badge-secondary">{{ l.leave_type | title }}</span></td><td>{{ l.start_date.strftime('%b %d, %Y') }}</td><td>{{ l.end_date.strftime('%b %d, %Y') }}</td><td>{{ l.days_requested or '—' }}</td><td><span class="status-pill {{ l.status }}">{{ l.status | title }}</span></td></tr>
+          {% else %}<tr><td colspan="5" class="text-center text-muted py-3">No leave requests</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-money-check-alt me-2 text-success"></i>Payroll History</h5></div>
+      <div class="table-responsive"><table class="table">
+        <thead><tr><th>Period</th><th>Basic</th><th>Gross</th><th>Net</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for p in payroll %}
+          <tr>
+            <td class="fw-600">{{ '%02d'|format(p.month) }}/{{ p.year }}</td>
+            <td>${{ '{:,.0f}'.format(p.basic_salary) }}</td>
+            <td>${{ '{:,.0f}'.format(p.gross_salary or 0) }}</td>
+            <td class="fw-600 text-success">${{ '{:,.0f}'.format(p.net_salary or 0) }}</td>
+            <td><span class="status-pill {{ p.status }}">{{ p.status | title }}</span></td>
+          </tr>
+          {% else %}<tr><td colspan="5" class="text-center text-muted py-3">No payroll records</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

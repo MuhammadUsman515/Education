@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Students</h1>
+    <p class="page-subtitle">Manage all student records · {{ students.total }} total</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.export_students') }}" class="btn btn-light btn-sm"><i class="fas fa-download me-1"></i>Export CSV</a>
+    <a href="{{ url_for('admin.add_student') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Student</a>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <form method="GET" class="d-flex align-items-center gap-3 flex-wrap w-100">
+    <div class="search-input flex-fill">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" name="search" class="form-control" placeholder="Search by name or student ID…" value="{{ search }}">
+    </div>
+    <select name="class_id" class="form-select" style="width:180px" onchange="this.form.submit()">
+      <option value="">All Classes</option>
+      {% for c in classes %}<option value="{{ c.id }}" {{ 'selected' if class_filter|string == c.id|string }}>{{ c.full_name }}</option>{% endfor %}
+    </select>
+    <select name="status" class="form-select" style="width:140px" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      {% for s in ['active','graduated','transferred','suspended'] %}
+      <option value="{{ s }}" {{ 'selected' if status_filter == s }}>{{ s | title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search me-1"></i>Search</button>
+    {% if search or class_filter or status_filter %}
+    <a href="{{ url_for('admin.students') }}" class="btn btn-light btn-sm"><i class="fas fa-times me-1"></i>Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Student</th><th>Student ID</th><th>Class</th><th>Gender</th>
+          <th>Phone</th><th>Parent</th><th>Attendance</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students.items %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar avatar-sm">{{ s.first_name[0] }}</div>
+              <div><div class="fw-600">{{ s.full_name }}</div><small class="text-muted">{{ s.email or '—' }}</small></div>
+            </div>
+          </td>
+          <td><code class="fs-12">{{ s.student_id }}</code></td>
+          <td>{{ s.current_class.full_name if s.current_class else '<span class="text-muted">—</span>' | safe }}</td>
+          <td>{{ s.gender or '—' }}</td>
+          <td>{{ s.phone or '—' }}</td>
+          <td>{{ s.parent.full_name if s.parent else '<span class="text-muted">—</span>' | safe }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="progress flex-fill" style="width:60px">
+                {% set pct = s.attendance_percentage() %}
+                <div class="progress-bar {{ 'bg-success' if pct>=75 else 'bg-warning' if pct>=50 else 'bg-danger' }}" style="width:{{ pct }}%"></div>
+              </div>
+              <small class="fw-600 {{ 'text-success' if pct>=75 else 'text-warning' if pct>=50 else 'text-danger' }}">{{ pct }}%</small>
+            </div>
+          </td>
+          <td><span class="status-pill {{ s.status }}">{{ s.status | title }}</span></td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{{ url_for('admin.student_detail', student_id=s.id) }}" class="btn btn-light btn-icon btn-sm" data-bs-toggle="tooltip" title="View"><i class="fas fa-eye"></i></a>
+              <a href="{{ url_for('admin.edit_student', student_id=s.id) }}" class="btn btn-light btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="fas fa-user-graduate"></i></div><h5>No students found</h5><p>Try adjusting your search filters</p><a href="{{ url_for('admin.add_student') }}" class="btn btn-primary btn-sm mt-2"><i class="fas fa-plus me-1"></i>Add First Student</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if students.pages > 1 %}
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    <small class="text-muted">Showing {{ students.items|length }} of {{ students.total }} students</small>
+    <nav><ul class="pagination pagination-sm mb-0">
+      {% if students.has_prev %}<li class="page-item"><a class="page-link" href="?page={{ students.prev_num }}&search={{ search }}&class_id={{ class_filter }}&status={{ status_filter }}"><i class="fas fa-chevron-left"></i></a></li>{% endif %}
+      {% for p in students.iter_pages(left_edge=1,right_edge=1,left_current=2,right_current=2) %}
+        {% if p %}<li class="page-item {{ 'active' if p==students.page }}"><a class="page-link" href="?page={{ p }}&search={{ search }}&class_id={{ class_filter }}&status={{ status_filter }}">{{ p }}</a></li>
+        {% else %}<li class="page-item disabled"><span class="page-link">…</span></li>{% endif %}
+      {% endfor %}
+      {% if students.has_next %}<li class="page-item"><a class="page-link" href="?page={{ students.next_num }}&search={{ search }}&class_id={{ class_filter }}&status={{ status_filter }}"><i class="fas fa-chevron-right"></i></a></li>{% endif %}
+    </ul></nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Add Academic Year{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">Add Academic Year</h1></div></div>
+<div class="row justify-content-center"><div class="col-lg-5">
+<form method="POST">
+  <div class="card">
+    <div class="card-body">
+      <div class="mb-3"><label class="form-label">Year Name *</label><input type="text" name="name" class="form-control" required placeholder="e.g. 2025-2026"></div>
+      <div class="mb-3"><label class="form-label">Start Date *</label><input type="date" name="start_date" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label">End Date *</label><input type="date" name="end_date" class="form-control" required></div>
+      <div class="form-check"><input type="checkbox" name="is_current" id="cur" class="form-check-input"><label class="form-check-label" for="cur">Set as current year</label></div>
+    </div>
+    <div class="card-footer d-flex gap-2"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create</button><a href="{{ url_for('admin.academic_years') }}" class="btn btn-light">Cancel</a></div>
+  </div>
+</form>
+</div></div>
+{% endblock %}

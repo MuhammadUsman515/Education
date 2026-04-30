@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Add Class{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">Add Class</h1></div></div>
+<div class="row justify-content-center"><div class="col-lg-6">
+<form method="POST">
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Class Name *</label><input type="text" name="name" class="form-control" required placeholder="e.g. Class 10"></div>
+        <div class="col-md-6"><label class="form-label">Section *</label><input type="text" name="section" class="form-control" required placeholder="e.g. A"></div>
+        <div class="col-md-6"><label class="form-label">Grade *</label><input type="text" name="grade" class="form-control" required placeholder="e.g. 10"></div>
+        <div class="col-md-6"><label class="form-label">Room Number</label><input type="text" name="room_number" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">Max Students</label><input type="number" name="max_students" class="form-control" value="40"></div>
+        <div class="col-md-6"><label class="form-label">Academic Year</label>
+          <select name="academic_year_id" class="form-select"><option value="">Select year</option>{% for y in academic_years %}<option value="{{ y.id }}" {{ 'selected' if y.is_current }}>{{ y.name }}</option>{% endfor %}</select>
+        </div>
+        <div class="col-12"><label class="form-label">Class Teacher</label>
+          <select name="class_teacher_id" class="form-select"><option value="">Select teacher</option>{% for t in teachers %}<option value="{{ t.id }}">{{ t.full_name }}</option>{% endfor %}</select>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create Class</button>
+      <a href="{{ url_for('admin.classes') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</form>
+</div></div>
+{% endblock %}

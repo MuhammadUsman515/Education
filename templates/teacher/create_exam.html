@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Create Exam{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">Create Exam</h1></div></div>
+<div class="row justify-content-center"><div class="col-lg-7">
+<form method="POST">
+  <div class="card">
+    <div class="card-header"><h5 class="card-title"><i class="fas fa-file-alt me-2 text-warning"></i>Exam Details</h5></div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label">Exam Name *</label><input type="text" name="name" class="form-control" required></div>
+        <div class="col-md-6"><label class="form-label">Type *</label><select name="exam_type" class="form-select" required>{% for t in ['quiz','assignment','midterm','final','practical','test'] %}<option value="{{ t }}">{{ t | title }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label">Subject</label><select name="subject_id" class="form-select"><option value="">Select</option>{% for s in subjects %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label">Class</label><select name="class_id" class="form-select"><option value="">Select</option>{% for c in classes %}<option value="{{ c.id }}">{{ c.full_name }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label">Date</label><input type="date" name="date" class="form-control"></div>
+        <div class="col-md-4"><label class="form-label">Duration (min)</label><input type="number" name="duration_minutes" class="form-control" value="60"></div>
+        <div class="col-md-4"><label class="form-label">Total Marks *</label><input type="number" name="total_marks" class="form-control" value="100" required></div>
+        <div class="col-md-4"><label class="form-label">Passing Marks *</label><input type="number" name="passing_marks" class="form-control" value="40" required></div>
+        <div class="col-12"><label class="form-label">Instructions</label><textarea name="instructions" class="form-control" rows="3"></textarea></div>
+      </div>
+    </div>
+    <div class="card-footer d-flex gap-2"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create</button><a href="{{ url_for('teacher.exams') }}" class="btn btn-light">Cancel</a></div>
+  </div>
+</form>
+</div></div>
+{% endblock %}

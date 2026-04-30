@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Payroll{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Payroll</h1>
+    <p class="page-subtitle">Monthly employee compensation records</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('hr.export_payroll', month=month_filter, year=year_filter) }}" class="btn btn-light btn-sm"><i class="fas fa-download me-1"></i>Export CSV</a>
+    <a href="{{ url_for('hr.generate_payroll') }}" class="btn btn-primary btn-sm"><i class="fas fa-cogs me-1"></i>Generate Payroll</a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6"><div class="stat-card primary"><div class="stat-icon primary"><i class="fas fa-money-bill-wave"></i></div><div class="stat-number">${{ '{:,.0f}'.format(total_gross) }}</div><div class="stat-label">Gross Salary</div></div></div>
+  <div class="col-md-6"><div class="stat-card success"><div class="stat-icon success"><i class="fas fa-check-double"></i></div><div class="stat-number">${{ '{:,.0f}'.format(total_net) }}</div><div class="stat-label">Net Payout</div></div></div>
+</div>
+
+<div class="filter-bar">
+  <form method="GET" class="d-flex gap-3 align-items-center">
+    <label class="form-label mb-0">Month:</label>
+    <select name="month" class="form-select" style="width:130px" onchange="this.form.submit()">
+      {% for m in range(1,13) %}<option value="{{ m }}" {{ 'selected' if month_filter==m }}>{{ '%02d'|format(m) }}</option>{% endfor %}
+    </select>
+    <select name="year" class="form-select" style="width:100px" onchange="this.form.submit()">
+      {% for y in range(2023, 2027) %}<option value="{{ y }}" {{ 'selected' if year_filter==y }}>{{ y }}</option>{% endfor %}
+    </select>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Employee</th><th>Department</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Gross</th><th>Net</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for r in records.items %}
+        <tr>
+          <td><div class="d-flex align-items-center gap-2"><div class="avatar avatar-sm">{{ r.employee.first_name[0] }}</div><div class="fw-600">{{ r.employee.full_name }}</div></div></td>
+          <td>{{ r.employee.department.name if r.employee.department else '—' }}</td>
+          <td>${{ '{:,.0f}'.format(r.basic_salary) }}</td>
+          <td class="text-success">${{ '{:,.0f}'.format((r.house_allowance or 0)+(r.transport_allowance or 0)+(r.medical_allowance or 0)+(r.other_allowances or 0)) }}</td>
+          <td class="text-danger">${{ '{:,.0f}'.format((r.tax_deduction or 0)+(r.pension_deduction or 0)+(r.other_deductions or 0)) }}</td>
+          <td>${{ '{:,.0f}'.format(r.gross_salary or 0) }}</td>
+          <td class="fw-600 text-success">${{ '{:,.0f}'.format(r.net_salary or 0) }}</td>
+          <td><span class="status-pill {{ r.status }}">{{ r.status | title }}</span></td>
+          <td>
+            {% if r.status == 'pending' %}
+            <form method="POST" action="{{ url_for('hr.mark_paid', payroll_id=r.id) }}">
+              <button type="submit" class="btn btn-success btn-sm">Mark Paid</button>
+            </form>
+            {% else %}
+            <span class="text-muted fs-12">{{ r.payment_date.strftime('%b %d') if r.payment_date else '—' }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="fas fa-money-check-alt"></i></div><h5>No payroll for this period</h5><a href="{{ url_for('hr.generate_payroll') }}" class="btn btn-primary btn-sm mt-2">Generate Payroll</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Enter Results — {{ exam.name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('admin.exams') }}">Exams</a></li><li class="breadcrumb-item active">Enter Results</li></ol></nav>
+    <h1 class="page-title">{{ exam.name }}</h1>
+    <p class="page-subtitle">{{ exam.exam_type | title }} · {{ exam.class_.full_name if exam.class_ else '' }} · Total Marks: {{ exam.total_marks | int }} · Passing: {{ exam.passing_marks | int }}</p>
+  </div>
+</div>
+<form method="POST">
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table">
+        <thead><tr><th>#</th><th>Student</th><th>Absent</th><th>Marks Obtained</th><th>Grade (auto)</th><th>Remarks</th></tr></thead>
+        <tbody>
+          {% for s in students %}
+          {% set r = existing_results.get(s.id) %}
+          <tr>
+            <td class="text-muted fs-12">{{ loop.index }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar avatar-sm">{{ s.first_name[0] }}</div>
+                <div><div class="fw-600">{{ s.full_name }}</div><small class="text-muted">{{ s.student_id }}</small></div>
+              </div>
+            </td>
+            <td><input type="checkbox" name="absent_{{ s.id }}" class="form-check-input absent-cb" data-sid="{{ s.id }}" {{ 'checked' if r and r.is_absent }}></td>
+            <td><input type="number" name="marks_{{ s.id }}" class="form-control form-control-sm" style="width:100px" step="0.5" min="0" max="{{ exam.total_marks }}" value="{{ r.marks_obtained if r and r.marks_obtained is not none else '' }}" {{ 'disabled' if r and r.is_absent }}></td>
+            <td>
+              {% if r and r.grade %}<span class="badge badge-primary">{{ r.grade }}</span>{% else %}<span class="text-muted fs-12">—</span>{% endif %}
+            </td>
+            <td><input type="text" name="remarks_{{ s.id }}" class="form-control form-control-sm" placeholder="Optional" value="{{ r.remarks if r else '' }}"></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No students in this class</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Results</button>
+      <a href="{{ url_for('admin.exams') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll('.absent-cb').forEach(cb => {
+  cb.addEventListener('change', function() {
+    const sid = this.dataset.sid;
+    const marksInput = document.querySelector(`input[name="marks_${sid}"]`);
+    if (marksInput) { marksInput.disabled = this.checked; if (this.checked) marksInput.value = ''; }
+  });
+});
+</script>
+{% endblock %}

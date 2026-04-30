@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Fee Structures{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left"><h1 class="page-title">Fee Structures</h1><p class="page-subtitle">Define fee types and amounts per class</p></div>
+  <a href="{{ url_for('admin.add_fee_structure') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Structure</a>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Name</th><th>Type</th><th>Class</th><th>Amount</th><th>Frequency</th><th>Due Date</th><th>Year</th></tr></thead>
+      <tbody>
+        {% for s in structures %}
+        <tr>
+          <td class="fw-600">{{ s.name }}</td>
+          <td><span class="badge badge-info">{{ s.fee_type | title }}</span></td>
+          <td>{{ s.class_.full_name if s.class_ else 'All Classes' }}</td>
+          <td class="fw-600 text-success">${{ '{:,.0f}'.format(s.amount) }}</td>
+          <td>{{ s.frequency | title }}</td>
+          <td>{{ s.due_date.strftime('%b %d') if s.due_date else '—' }}</td>
+          <td>{{ s.academic_year or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7"><div class="empty-state"><div class="empty-icon"><i class="fas fa-layer-group"></i></div><h5>No fee structures defined</h5><a href="{{ url_for('admin.add_fee_structure') }}" class="btn btn-primary btn-sm mt-2">Add Structure</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

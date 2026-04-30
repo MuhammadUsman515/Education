@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{{ student.full_name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('parent.dashboard') }}">Dashboard</a></li><li class="breadcrumb-item active">{{ student.full_name }}</li></ol></nav>
+    <h1 class="page-title">{{ student.full_name }}</h1>
+    <p class="page-subtitle">{{ student.current_class.full_name if student.current_class else '' }} · {{ student.student_id }}</p>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="profile-card">
+      <div class="profile-card-header"><div class="profile-avatar">{{ student.first_name[0] }}</div><h4>{{ student.full_name }}</h4><p>{{ student.current_class.full_name if student.current_class else '' }}</p></div>
+      <div class="profile-card-body">
+        <div class="info-row"><span class="info-label">Student ID</span><span class="info-value fw-600"><code>{{ student.student_id }}</code></span></div>
+        <div class="info-row"><span class="info-label">Gender</span><span class="info-value">{{ student.gender or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">DOB</span><span class="info-value">{{ student.date_of_birth.strftime('%b %d, %Y') if student.date_of_birth else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Attendance</span><span class="info-value fw-600 {{ 'text-success' if student.attendance_percentage()>=75 else 'text-danger' }}">{{ student.attendance_percentage() }}%</span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="status-pill {{ student.status }}">{{ student.status | title }}</span></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-star me-2 text-warning"></i>Exam Results</h5></div>
+      <div class="table-responsive"><table class="table">
+        <thead><tr><th>Exam</th><th>Subject</th><th>Marks</th><th>Grade</th><th>Date</th></tr></thead>
+        <tbody>{% for r in results %}<tr>
+          <td class="fw-600">{{ r.exam.name }}</td><td>{{ r.exam.subject.name if r.exam.subject else '—' }}</td>
+          <td>{% if r.is_absent %}<span class="text-danger">Absent</span>{% elif r.marks_obtained is not none %}{{ r.marks_obtained | int }}/{{ r.exam.total_marks | int }}{% else %}—{% endif %}</td>
+          <td>{% if r.grade %}<span class="grade-circle grade-{{ 'a_plus' if r.grade=='A+' else r.grade | lower }}">{{ r.grade }}</span>{% else %}—{% endif %}</td>
+          <td>{{ r.exam.date.strftime('%b %d, %Y') if r.exam.date else '—' }}</td>
+        </tr>{% else %}<tr><td colspan="5" class="text-center text-muted py-3">No results</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-calendar-check me-2 text-success"></i>Recent Attendance</h5></div>
+      <div class="table-responsive"><table class="table">
+        <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+        <tbody>{% for a in attendance %}<tr>
+          <td>{{ a.date.strftime('%b %d, %Y') }}</td><td>{{ a.subject.name if a.subject else 'General' }}</td>
+          <td><span class="status-pill {{ a.status }}">{{ a.status | title }}</span></td>
+        </tr>{% else %}<tr><td colspan="3" class="text-center text-muted py-3">No records</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-dollar-sign me-2 text-success"></i>Fee Payments</h5></div>
+      <div class="table-responsive"><table class="table">
+        <thead><tr><th>Receipt</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+        <tbody>{% for p in payments %}<tr>
+          <td><code class="fs-12">{{ p.receipt_number }}</code></td><td>${{ '{:,.0f}'.format(p.amount_due) }}</td>
+          <td class="text-success fw-600">${{ '{:,.0f}'.format(p.amount_paid) }}</td>
+          <td class="{{ 'text-danger fw-600' if p.balance > 0 else '' }}">${{ '{:,.0f}'.format(p.balance) }}</td>
+          <td><span class="status-pill {{ p.status }}">{{ p.status | title }}</span></td>
+        </tr>{% else %}<tr><td colspan="5" class="text-center text-muted py-3">No records</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

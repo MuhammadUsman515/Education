@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Edit' if employee else 'Add' }} Employee{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">{{ 'Edit Employee' if employee else 'Add Employee' }}</h1></div></div>
+<form method="POST">
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title">Personal Information</h5></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">First Name *</label><input type="text" name="first_name" class="form-control" required value="{{ employee.first_name if employee else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Last Name *</label><input type="text" name="last_name" class="form-control" required value="{{ employee.last_name if employee else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Date of Birth</label><input type="date" name="date_of_birth" class="form-control" value="{{ employee.date_of_birth.strftime('%Y-%m-%d') if employee and employee.date_of_birth else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Gender</label><select name="gender" class="form-select"><option value="">Select</option>{% for g in ['Male','Female','Other'] %}<option value="{{ g }}" {{ 'selected' if employee and employee.gender==g }}>{{ g }}</option>{% endfor %}</select></div>
+          <div class="col-md-6"><label class="form-label">Phone</label><input type="tel" name="phone" class="form-control" value="{{ employee.phone if employee else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ employee.email if employee else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">National ID</label><input type="text" name="national_id" class="form-control" value="{{ employee.national_id if employee else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Bank Account</label><input type="text" name="bank_account" class="form-control" value="{{ employee.bank_account if employee else '' }}"></div>
+          <div class="col-12"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2">{{ employee.address if employee else '' }}</textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title">Employment</h5></div>
+      <div class="card-body">
+        <div class="mb-3"><label class="form-label">Employee ID *</label><input type="text" name="employee_id" class="form-control" required value="{{ employee.employee_id if employee else '' }}" {{ 'readonly' if employee }}></div>
+        <div class="mb-3"><label class="form-label">Department</label><select name="department_id" class="form-select"><option value="">None</option>{% for d in departments %}<option value="{{ d.id }}" {{ 'selected' if employee and employee.department_id==d.id }}>{{ d.name }}</option>{% endfor %}</select></div>
+        <div class="mb-3"><label class="form-label">Designation</label><input type="text" name="designation" class="form-control" value="{{ employee.designation if employee else '' }}"></div>
+        <div class="mb-3"><label class="form-label">Employment Type</label><select name="employment_type" class="form-select">{% for t in ['full-time','part-time','contract','temporary'] %}<option value="{{ t }}" {{ 'selected' if employee and employee.employment_type==t }}>{{ t | title }}</option>{% endfor %}</select></div>
+        <div class="mb-3"><label class="form-label">Joining Date</label><input type="date" name="joining_date" class="form-control" value="{{ employee.joining_date.strftime('%Y-%m-%d') if employee and employee.joining_date else '' }}"></div>
+        <div class="mb-3"><label class="form-label">Basic Salary ($)</label><input type="number" name="basic_salary" class="form-control" step="0.01" value="{{ employee.basic_salary if employee else '' }}"></div>
+        {% if employee %}<div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select">{% for s in ['active','inactive','terminated','resigned','retired'] %}<option value="{{ s }}" {{ 'selected' if employee.status==s }}>{{ s | title }}</option>{% endfor %}</select></div>
+        {% else %}<div class="mb-3"><label class="form-label">Password</label><input type="password" name="password" class="form-control" value="staff123"></div>{% endif %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-fill"><i class="fas fa-save me-2"></i>{{ 'Update' if employee else 'Add Employee' }}</button>
+      <a href="{{ url_for('hr.employees') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}

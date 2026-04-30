@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Grades & GPA{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Grades & GPA</h1>
+    <p class="page-subtitle">Your academic performance overview</p>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card primary text-center">
+      <div class="stat-number" style="font-size:36px">{{ cgpa }}</div>
+      <div class="stat-label">Cumulative GPA</div>
+      <div class="progress mt-3" style="height:8px"><div class="progress-bar bg-primary" style="width:{{ (cgpa/4)*100 }}%"></div></div>
+      <small class="text-muted">out of 4.0</small>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card success">
+      <div class="stat-icon success"><i class="fas fa-check-double"></i></div>
+      <div class="stat-number">{{ results|selectattr('grade', 'defined')|selectattr('grade', 'ne', 'F')|list|length }}</div>
+      <div class="stat-label">Subjects Passed</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card warning">
+      <div class="stat-icon warning"><i class="fas fa-list-alt"></i></div>
+      <div class="stat-number">{{ results|length }}</div>
+      <div class="stat-label">Total Exams</div>
+    </div>
+  </div>
+</div>
+
+{% for exam_type, type_results in by_type.items() %}
+<div class="card mb-4">
+  <div class="card-header"><h5 class="card-title"><i class="fas fa-file-alt me-2 text-primary"></i>{{ exam_type | title }}</h5></div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Marks</th><th>Percentage</th><th>Grade</th><th>GPA</th></tr></thead>
+      <tbody>
+        {% for r in type_results %}
+        <tr>
+          <td class="fw-600">{{ r.exam.name }}</td>
+          <td>{{ r.exam.subject.name if r.exam.subject else '—' }}</td>
+          <td>{{ r.exam.date.strftime('%b %d, %Y') if r.exam.date else '—' }}</td>
+          <td>{% if r.is_absent %}<span class="text-danger">Absent</span>{% elif r.marks_obtained is not none %}{{ r.marks_obtained | int }}/{{ r.exam.total_marks | int }}{% else %}—{% endif %}</td>
+          <td>{% if not r.is_absent and r.marks_obtained is not none %}{{ ((r.marks_obtained / r.exam.total_marks) * 100) | round(1) }}%{% else %}—{% endif %}</td>
+          <td>{% if r.grade %}<span class="grade-circle grade-{{ 'a_plus' if r.grade=='A+' else r.grade | lower }}">{{ r.grade }}</span>{% else %}—{% endif %}</td>
+          <td>{% if r.grade_points is not none %}<strong>{{ r.grade_points }}</strong>{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="empty-state"><div class="empty-icon"><i class="fas fa-star"></i></div><h5>No grades recorded yet</h5></div>
+{% endfor %}
+{% endblock %}

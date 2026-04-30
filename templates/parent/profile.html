@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">My Profile</h1></div></div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="profile-card">
+      <div class="profile-card-header" style="background:linear-gradient(135deg,#0f172a,#b45309,#f59e0b)">
+        <div class="profile-avatar">{{ parent.first_name[0] }}</div>
+        <h4>{{ parent.full_name }}</h4>
+        <p>Parent / Guardian</p>
+      </div>
+      <div class="profile-card-body">
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ parent.phone or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Alt. Phone</span><span class="info-value">{{ parent.alternate_phone or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ parent.email or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Occupation</span><span class="info-value">{{ parent.occupation or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Relationship</span><span class="info-value">{{ parent.relationship_to_student | title }}</span></div>
+        <div class="info-row"><span class="info-label">Address</span><span class="info-value">{{ parent.address or '—' }}</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-child me-2 text-warning"></i>My Children</h5></div>
+      <div class="card-body p-0">
+        {% for child in parent.children.all() %}
+        <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar avatar-md">{{ child.first_name[0] }}</div>
+            <div><div class="fw-600">{{ child.full_name }}</div><small class="text-muted">{{ child.student_id }} · {{ child.current_class.full_name if child.current_class else '—' }}</small></div>
+          </div>
+          <a href="{{ url_for('parent.child_detail', student_id=child.id) }}" class="btn btn-outline-primary btn-sm">View</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

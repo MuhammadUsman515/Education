@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}My Certificates{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">My Certificates</h1><p class="page-subtitle">{{ certificates|length }} certificates issued</p></div></div>
+<div class="row g-4">
+  {% for c in certificates %}
+  <div class="col-md-6">
+    <div class="card" style="border-left:4px solid #8b5cf6">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between gap-3">
+          <div class="d-flex align-items-start gap-3">
+            <div style="width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:22px;color:white;flex-shrink:0"><i class="fas fa-certificate"></i></div>
+            <div>
+              <h6 class="fw-700 mb-1">{{ c.title }}</h6>
+              <div class="d-flex gap-2 mb-2"><span class="badge badge-secondary">{{ c.certificate_type | title }}</span><code class="fs-11">{{ c.certificate_number }}</code></div>
+              {% if c.description %}<p class="text-muted fs-13 mb-2">{{ c.description }}</p>{% endif %}
+              <small class="text-muted"><i class="fas fa-calendar me-1"></i>Issued: {{ c.issue_date.strftime('%B %d, %Y') if c.issue_date else '—' }}</small>
+            </div>
+          </div>
+          <span class="status-pill {{ c.status }}">{{ c.status | title }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="empty-state"><div class="empty-icon"><i class="fas fa-certificate"></i></div><h5>No certificates issued yet</h5><p>Certificates issued by administration will appear here.</p></div></div>
+  {% endfor %}
+</div>
+{% endblock %}

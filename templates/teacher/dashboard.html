@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Teacher Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Welcome, {{ teacher.first_name }}!</h1>
+    <p class="page-subtitle">{{ teacher.specialization or teacher.department.name if teacher.department else 'Teacher' }} · ID: {{ teacher.teacher_id }}</p>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card primary"><div class="stat-icon primary"><i class="fas fa-book"></i></div><div class="stat-number">{{ subjects|length }}</div><div class="stat-label">My Subjects</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card success"><div class="stat-icon success"><i class="fas fa-user-graduate"></i></div><div class="stat-number">{{ total_students }}</div><div class="stat-label">My Students</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card warning"><div class="stat-icon warning"><i class="fas fa-clock"></i></div><div class="stat-number">{{ upcoming_exams|length }}</div><div class="stat-label">Upcoming Exams</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card info"><div class="stat-icon info"><i class="fas fa-check-double"></i></div><div class="stat-number">{{ recent_exams|selectattr('status','eq','completed')|list|length }}</div><div class="stat-label">Graded Exams</div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-book me-2 text-primary"></i>My Subjects</h5><a href="{{ url_for('teacher.classes') }}" class="btn btn-light btn-sm">View Classes</a></div>
+      <div class="card-body p-0">
+        {% for s in subjects %}
+        <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+          <div><div class="fw-600">{{ s.name }}</div><small class="text-muted"><code>{{ s.code }}</code> · {{ s.class_.full_name if s.class_ else '—' }}</small></div>
+          <span class="badge badge-primary">{{ s.credit_hours }} cr</span>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No subjects assigned</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-bullhorn me-2 text-warning"></i>Announcements</h5></div>
+      <div class="card-body p-0">
+        {% for ann in announcements %}
+        <div class="p-3 border-bottom"><div class="fw-600 fs-13">{{ ann.title }}</div><small class="text-muted">{{ ann.created_at.strftime('%b %d') }}</small></div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No announcements</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-file-alt me-2 text-warning"></i>Upcoming Exams</h5><a href="{{ url_for('teacher.create_exam') }}" class="btn btn-primary btn-sm">Create Exam</a></div>
+      <div class="card-body p-0">
+        {% for e in upcoming_exams %}
+        <div class="p-3 border-bottom">
+          <div class="d-flex justify-content-between">
+            <div><div class="fw-600">{{ e.name }}</div><small class="text-muted">{{ e.subject.name if e.subject else '—' }} · {{ e.class_.full_name if e.class_ else '—' }}</small></div>
+            <div class="text-end"><div class="fw-600 text-primary">{{ e.date.strftime('%b %d') if e.date else '—' }}</div><small class="text-muted">{{ e.exam_type | title }}</small></div>
+          </div>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No upcoming exams</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-history me-2 text-secondary"></i>Recent Exams</h5><a href="{{ url_for('teacher.exams') }}" class="btn btn-light btn-sm">All Exams</a></div>
+      <div class="card-body p-0">
+        {% for e in recent_exams %}
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+          <div><div class="fw-600 fs-13">{{ e.name }}</div><small class="text-muted">{{ e.date.strftime('%b %d, %Y') if e.date else '—' }}</small></div>
+          <div class="d-flex gap-2 align-items-center">
+            <span class="status-pill {{ e.status }}">{{ e.status | title }}</span>
+            {% if e.status == 'scheduled' %}<a href="{{ url_for('teacher.grade_exam', exam_id=e.id) }}" class="btn btn-primary btn-sm btn-icon"><i class="fas fa-edit"></i></a>{% endif %}
+          </div>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No exams</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

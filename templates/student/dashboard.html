@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Welcome, {{ student.first_name }}!</h1>
+    <p class="page-subtitle">{{ student.current_class.full_name if student.current_class else 'No class assigned' }} · Student ID: {{ student.student_id }}</p>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card primary">
+      <div class="stat-icon primary"><i class="fas fa-calendar-check"></i></div>
+      <div class="stat-number">{{ attendance_pct }}%</div>
+      <div class="stat-label">Attendance</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card success">
+      <div class="stat-icon success"><i class="fas fa-star"></i></div>
+      <div class="stat-number">{{ recent_results|length }}</div>
+      <div class="stat-label">Exams Taken</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card warning">
+      <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+      <div class="stat-number">{{ upcoming_exams|length }}</div>
+      <div class="stat-label">Upcoming Exams</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card {{ 'danger' if total_due > 0 else 'success' }}">
+      <div class="stat-icon {{ 'danger' if total_due > 0 else 'success' }}"><i class="fas fa-dollar-sign"></i></div>
+      <div class="stat-number">${{ '{:,.0f}'.format(total_due) }}</div>
+      <div class="stat-label">Fee Due</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <!-- Recent Results -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><i class="fas fa-star me-2 text-warning"></i>Recent Exam Results</h5>
+        <a href="{{ url_for('student.grades') }}" class="btn btn-light btn-sm">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Exam</th><th>Subject</th><th>Marks</th><th>Grade</th></tr></thead>
+          <tbody>
+            {% for r in recent_results %}
+            <tr>
+              <td class="fw-600">{{ r.exam.name }}</td>
+              <td>{{ r.exam.subject.name if r.exam.subject else '—' }}</td>
+              <td>{% if r.is_absent %}<span class="text-danger">Absent</span>{% elif r.marks_obtained is not none %}{{ r.marks_obtained | int }}/{{ r.exam.total_marks | int }}{% else %}—{% endif %}</td>
+              <td>{% if r.grade %}<span class="grade-circle grade-{{ 'a_plus' if r.grade=='A+' else r.grade | lower }}">{{ r.grade }}</span>{% else %}—{% endif %}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted">No results yet</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Upcoming Exams -->
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-file-alt me-2 text-info"></i>Upcoming Exams</h5></div>
+      <div class="card-body p-0">
+        {% for e in upcoming_exams %}
+        <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+          <div>
+            <div class="fw-600">{{ e.name }}</div>
+            <small class="text-muted">{{ e.subject.name if e.subject else '—' }} · {{ e.date.strftime('%b %d, %Y') if e.date else '—' }}</small>
+          </div>
+          <span class="badge badge-warning">{{ e.exam_type | title }}</span>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No upcoming exams</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <!-- Fee Status -->
+    {% if fee_dues %}
+    <div class="card mb-4" style="border-color:#fee2e2">
+      <div class="card-header" style="background:#fff5f5"><h5 class="card-title text-danger"><i class="fas fa-exclamation-circle me-2"></i>Outstanding Fees</h5></div>
+      <div class="card-body p-0">
+        {% for p in fee_dues %}
+        <div class="p-3 border-bottom d-flex justify-content-between">
+          <div><div class="fw-600 fs-13">{{ p.fee_structure.name if p.fee_structure else 'Fee' }}</div><small class="text-muted">{{ p.month or '' }}</small></div>
+          <div class="text-danger fw-700">${{ '{:,.0f}'.format(p.balance) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="card-footer"><a href="{{ url_for('student.fees') }}" class="btn btn-danger btn-sm w-100">View Fee Details</a></div>
+    </div>
+    {% endif %}
+
+    <!-- Announcements -->
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-bullhorn me-2 text-warning"></i>Announcements</h5></div>
+      <div class="card-body p-0">
+        {% for ann in announcements %}
+        <div class="p-3 border-bottom">
+          <div class="d-flex gap-2">
+            <div style="width:8px;height:8px;border-radius:50%;background:{{ '#ef4444' if ann.priority=='urgent' else '#f59e0b' if ann.priority=='high' else '#10b981' }};margin-top:5px;flex-shrink:0"></div>
+            <div><div class="fw-600 fs-13">{{ ann.title }}</div><small class="text-muted">{{ ann.created_at.strftime('%b %d') }}</small></div>
+          </div>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No announcements</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

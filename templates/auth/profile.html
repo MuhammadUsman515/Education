@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">My Profile</h1>
+    <p class="page-subtitle">Your account information</p>
+  </div>
+  <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-primary">
+    <i class="fas fa-lock me-2"></i>Change Password
+  </a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="profile-card">
+      <div class="profile-card-header">
+        <div class="profile-avatar">{{ current_user.get_full_name()[0] | upper }}</div>
+        <h4>{{ current_user.get_full_name() }}</h4>
+        <p>{{ current_user.role | title }} • {{ current_user.email }}</p>
+      </div>
+      <div class="profile-card-body">
+        <div class="info-row"><span class="info-label">Username</span><span class="info-value">{{ current_user.username }}</span></div>
+        <div class="info-row"><span class="info-label">Role</span><span class="info-value"><span class="badge badge-primary">{{ current_user.role | title }}</span></span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="status-pill active">Active</span></span></div>
+        <div class="info-row"><span class="info-label">Last Login</span><span class="info-value">{{ current_user.last_login.strftime('%b %d, %Y %H:%M') if current_user.last_login else 'N/A' }}</span></div>
+        <div class="info-row"><span class="info-label">Member Since</span><span class="info-value">{{ current_user.created_at.strftime('%b %d, %Y') if current_user.created_at else 'N/A' }}</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    {% if current_user.student %}
+    {% set s = current_user.student %}
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-user-graduate me-2 text-primary"></i>Student Details</h5></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Student ID</span><span class="info-value fw-600">{{ s.student_id }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Full Name</span><span class="info-value">{{ s.full_name }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Class</span><span class="info-value">{{ s.current_class.full_name if s.current_class else 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Gender</span><span class="info-value">{{ s.gender or 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ s.phone or 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Date of Birth</span><span class="info-value">{{ s.date_of_birth.strftime('%b %d, %Y') if s.date_of_birth else 'N/A' }}</span></div></div>
+          <div class="col-12"><div class="info-row"><span class="info-label">Address</span><span class="info-value">{{ s.address or 'N/A' }}</span></div></div>
+        </div>
+      </div>
+    </div>
+    {% elif current_user.teacher %}
+    {% set t = current_user.teacher %}
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-chalkboard-teacher me-2 text-info"></i>Teacher Details</h5></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Teacher ID</span><span class="info-value fw-600">{{ t.teacher_id }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Full Name</span><span class="info-value">{{ t.full_name }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Department</span><span class="info-value">{{ t.department.name if t.department else 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Qualification</span><span class="info-value">{{ t.qualification or 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Specialization</span><span class="info-value">{{ t.specialization or 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Experience</span><span class="info-value">{{ t.experience_years }} years</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ t.phone or 'N/A' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Joined</span><span class="info-value">{{ t.joining_date.strftime('%b %d, %Y') if t.joining_date else 'N/A' }}</span></div></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

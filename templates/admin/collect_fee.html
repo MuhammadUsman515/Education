@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Collect Fee{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('admin.fees') }}">Fees</a></li><li class="breadcrumb-item active">Collect</li></ol></nav>
+    <h1 class="page-title">Collect Fee</h1>
+  </div>
+</div>
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<form method="POST">
+  <div class="card">
+    <div class="card-header"><h5 class="card-title"><i class="fas fa-receipt me-2 text-success"></i>Payment Details</h5></div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Student *</label>
+          <select name="student_id" class="form-select" required>
+            <option value="">Select student</option>
+            {% for s in students %}<option value="{{ s.id }}">{{ s.full_name }} ({{ s.student_id }})</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Fee Structure</label>
+          <select name="fee_structure_id" id="fee_structure_id" class="form-select">
+            <option value="">Select structure</option>
+            {% for fs in fee_structures %}<option value="{{ fs.id }}" data-amount="{{ fs.amount }}">{{ fs.name }} (${{ fs.amount | int }})</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Amount Due ($) *</label>
+          <input type="number" name="amount_due" id="amount_due" class="form-control" step="0.01" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Amount Paid ($) *</label>
+          <input type="number" name="amount_paid" class="form-control" step="0.01" required>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Discount ($)</label>
+          <input type="number" name="discount" class="form-control" step="0.01" value="0">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Fine ($)</label>
+          <input type="number" name="fine" class="form-control" step="0.01" value="0">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Payment Method *</label>
+          <select name="payment_method" class="form-select" required>
+            {% for m in ['cash','bank_transfer','online','cheque','card'] %}<option value="{{ m }}">{{ m | replace('_',' ') | title }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Transaction ID</label>
+          <input type="text" name="transaction_id" class="form-control" placeholder="Optional">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Payment Date</label>
+          <input type="date" name="payment_date" class="form-control" value="{{ '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Month</label>
+          <input type="text" name="month" class="form-control" placeholder="e.g. January 2025">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Academic Year</label>
+          <input type="text" name="academic_year" class="form-control" placeholder="2024-2025">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Remarks</label>
+          <textarea name="remarks" class="form-control" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button type="submit" class="btn btn-success"><i class="fas fa-check me-2"></i>Record Payment</button>
+      <a href="{{ url_for('admin.fees') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</form>
+</div>
+</div>
+{% endblock %}

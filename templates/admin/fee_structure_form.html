@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Add Fee Structure{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">Add Fee Structure</h1></div></div>
+<div class="row justify-content-center"><div class="col-lg-6">
+<form method="POST">
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label">Name *</label><input type="text" name="name" class="form-control" required placeholder="e.g. Monthly Tuition Fee - Grade 10"></div>
+        <div class="col-md-6"><label class="form-label">Fee Type *</label>
+          <select name="fee_type" class="form-select" required>{% for t in ['tuition','admission','exam','library','sports','transport','hostel','lab','activity'] %}<option value="{{ t }}">{{ t | title }}</option>{% endfor %}</select>
+        </div>
+        <div class="col-md-6"><label class="form-label">Class</label><select name="class_id" class="form-select"><option value="">All Classes</option>{% for c in classes %}<option value="{{ c.id }}">{{ c.full_name }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label">Amount ($) *</label><input type="number" name="amount" class="form-control" step="0.01" required></div>
+        <div class="col-md-6"><label class="form-label">Frequency</label><select name="frequency" class="form-select">{% for f in ['monthly','quarterly','yearly','one-time'] %}<option value="{{ f }}">{{ f | title }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label">Due Date</label><input type="date" name="due_date" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">Academic Year</label><input type="text" name="academic_year" class="form-control" placeholder="2024-2025"></div>
+        <div class="col-12"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="card-footer d-flex gap-2"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Add Structure</button><a href="{{ url_for('admin.fee_structures') }}" class="btn btn-light">Cancel</a></div>
+  </div>
+</form>
+</div></div>
+{% endblock %}

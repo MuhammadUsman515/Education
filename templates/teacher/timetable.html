@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}My Timetable{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">My Timetable</h1><p class="page-subtitle">Weekly teaching schedule</p></div></div>
+<div class="row g-4">
+  {% for day, entries in timetable.items() %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title">{{ day }}</h5></div>
+      <div class="card-body p-2">
+        {% for e in entries %}
+        <div class="timetable-cell">
+          <div class="subject-name">{{ e.subject.name }}</div>
+          <div class="time"><i class="fas fa-clock me-1"></i>{{ e.start_time.strftime('%H:%M') }} – {{ e.end_time.strftime('%H:%M') }}</div>
+          <div class="teacher"><i class="fas fa-school me-1"></i>{{ e.class_.full_name if e.class_ else '—' }}{% if e.room %} · Room {{ e.room }}{% endif %}</div>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-3 fs-13">No classes</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

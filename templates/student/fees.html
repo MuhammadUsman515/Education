@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Fee Payments{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Fee Payments</h1>
+    <p class="page-subtitle">Your fee payment history and dues</p>
+  </div>
+</div>
+<div class="row g-4 mb-4">
+  <div class="col-md-6"><div class="stat-card success"><div class="stat-icon success"><i class="fas fa-check-circle"></i></div><div class="stat-number">${{ '{:,.0f}'.format(total_paid) }}</div><div class="stat-label">Total Paid</div></div></div>
+  <div class="col-md-6"><div class="stat-card {{ 'danger' if total_due > 0 else 'success' }}"><div class="stat-icon {{ 'danger' if total_due > 0 else 'success' }}"><i class="fas fa-dollar-sign"></i></div><div class="stat-number">${{ '{:,.0f}'.format(total_due) }}</div><div class="stat-label">Outstanding Due</div></div></div>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Receipt No.</th><th>Description</th><th>Amount Due</th><th>Paid</th><th>Balance</th><th>Method</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td><code class="fs-12">{{ p.receipt_number }}</code></td>
+          <td><div class="fw-600">{{ p.fee_structure.name if p.fee_structure else 'Fee Payment' }}</div><small class="text-muted">{{ p.month or '' }}</small></td>
+          <td>${{ '{:,.0f}'.format(p.amount_due) }}</td>
+          <td class="text-success fw-600">${{ '{:,.0f}'.format(p.amount_paid) }}</td>
+          <td class="{{ 'text-danger fw-600' if p.balance > 0 else 'text-success' }}">${{ '{:,.0f}'.format(p.balance) }}</td>
+          <td>{{ p.payment_method | replace('_',' ') | title if p.payment_method else '—' }}</td>
+          <td>{{ p.payment_date.strftime('%b %d, %Y') if p.payment_date else '—' }}</td>
+          <td><span class="status-pill {{ p.status }}">{{ p.status | title }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-4">No fee records</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

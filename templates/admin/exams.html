@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Exams{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Exams</h1>
+    <p class="page-subtitle">Manage scheduled and completed exams</p>
+  </div>
+  <a href="{{ url_for('admin.add_exam') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Schedule Exam</a>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Exam Name</th><th>Type</th><th>Subject</th><th>Class</th><th>Date</th><th>Total Marks</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for e in exams.items %}
+        <tr>
+          <td class="fw-600">{{ e.name }}</td>
+          <td><span class="badge badge-secondary">{{ e.exam_type | title }}</span></td>
+          <td>{{ e.subject.name if e.subject else '—' }}</td>
+          <td>{{ e.class_.full_name if e.class_ else '—' }}</td>
+          <td>{{ e.date.strftime('%b %d, %Y') if e.date else '—' }}</td>
+          <td>{{ e.total_marks | int }}</td>
+          <td><span class="status-pill {{ e.status }}">{{ e.status | title }}</span></td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{{ url_for('admin.exam_results', exam_id=e.id) }}" class="btn btn-primary btn-sm btn-icon" data-bs-toggle="tooltip" title="Enter Results"><i class="fas fa-edit"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="fas fa-file-alt"></i></div><h5>No exams scheduled</h5><a href="{{ url_for('admin.add_exam') }}" class="btn btn-primary btn-sm mt-2">Schedule Exam</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if exams.pages > 1 %}
+  <div class="card-footer"><nav><ul class="pagination pagination-sm mb-0 justify-content-end">
+    {% if exams.has_prev %}<li class="page-item"><a class="page-link" href="?page={{ exams.prev_num }}">Prev</a></li>{% endif %}
+    {% if exams.has_next %}<li class="page-item"><a class="page-link" href="?page={{ exams.next_num }}">Next</a></li>{% endif %}
+  </ul></nav></div>
+  {% endif %}
+</div>
+{% endblock %}

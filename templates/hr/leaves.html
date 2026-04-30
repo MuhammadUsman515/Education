@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Leave Requests{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">Leave Requests</h1></div></div>
+<div class="filter-bar">
+  <form method="GET" class="d-flex gap-3 align-items-center">
+    <label class="form-label mb-0">Status:</label>
+    <select name="status" class="form-select" style="width:150px" onchange="this.form.submit()">
+      <option value="">All</option>{% for s in ['pending','approved','rejected'] %}<option value="{{ s }}" {{ 'selected' if status_filter==s }}>{{ s | title }}</option>{% endfor %}
+    </select>
+    {% if status_filter %}<a href="{{ url_for('hr.leaves') }}" class="btn btn-light btn-sm">Clear</a>{% endif %}
+  </form>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for l in leaves.items %}
+        <tr>
+          <td><div class="d-flex align-items-center gap-2"><div class="avatar avatar-sm">{{ l.employee.first_name[0] }}</div><div class="fw-600">{{ l.employee.full_name }}</div></div></td>
+          <td><span class="badge badge-secondary">{{ l.leave_type | title }}</span></td>
+          <td>{{ l.start_date.strftime('%b %d, %Y') }}</td>
+          <td>{{ l.end_date.strftime('%b %d, %Y') }}</td>
+          <td class="text-muted fs-12" style="max-width:200px">{{ l.reason[:80] }}{% if l.reason|length > 80 %}…{% endif %}</td>
+          <td><span class="status-pill {{ l.status }}">{{ l.status | title }}</span></td>
+          <td>
+            {% if l.status == 'pending' %}
+            <form method="POST" action="{{ url_for('hr.action_leave', leave_id=l.id) }}" class="d-flex gap-1">
+              <input type="hidden" name="action" value="approved">
+              <button type="submit" class="btn btn-success btn-sm btn-icon"><i class="fas fa-check"></i></button>
+            </form>
+            <form method="POST" action="{{ url_for('hr.action_leave', leave_id=l.id) }}" class="d-inline">
+              <input type="hidden" name="action" value="rejected">
+              <button type="submit" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-times"></i></button>
+            </form>
+            {% else %}
+            <span class="text-muted fs-12">{{ l.approved_at.strftime('%b %d') if l.approved_at else '—' }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7"><div class="empty-state"><div class="empty-icon"><i class="fas fa-calendar-minus"></i></div><h5>No leave requests</h5></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

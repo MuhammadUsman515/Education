@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Classes{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left"><h1 class="page-title">Classes</h1><p class="page-subtitle">Manage school classes and sections</p></div>
+  <a href="{{ url_for('admin.add_class') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Class</a>
+</div>
+<div class="row g-4">
+  {% for c in classes %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <div class="stat-icon primary" style="width:44px;height:44px;font-size:18px"><i class="fas fa-school"></i></div>
+            <div><h6 class="fw-700 mb-0">{{ c.full_name }}</h6><small class="text-muted">Grade {{ c.grade }}</small></div>
+          </div>
+          <span class="badge badge-primary">{{ c.students.count() }} / {{ c.max_students }}</span>
+        </div>
+        <div class="info-row"><span class="info-label">Class Teacher</span><span class="info-value">{{ c.class_teacher.full_name if c.class_teacher else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Room</span><span class="info-value">{{ c.room_number or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Subjects</span><span class="info-value">{{ c.subjects.count() }}</span></div>
+        <div class="progress mt-3" style="height:6px">
+          {% set pct = (c.students.count() / c.max_students * 100) | round | int %}
+          <div class="progress-bar {{ 'bg-success' if pct<75 else 'bg-warning' if pct<90 else 'bg-danger' }}" style="width:{{ pct }}%"></div>
+        </div>
+        <small class="text-muted fs-12">{{ pct }}% capacity</small>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="empty-state"><div class="empty-icon"><i class="fas fa-school"></i></div><h5>No classes created</h5><a href="{{ url_for('admin.add_class') }}" class="btn btn-primary btn-sm mt-2">Add Class</a></div></div>
+  {% endfor %}
+</div>
+{% endblock %}

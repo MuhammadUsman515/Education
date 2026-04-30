@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}New Announcement{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">New Announcement</h1>
+  </div>
+</div>
+<div class="row justify-content-center"><div class="col-lg-7">
+<form method="POST">
+  <div class="card">
+    <div class="card-header"><h5 class="card-title"><i class="fas fa-bullhorn me-2 text-warning"></i>Announcement Details</h5></div>
+    <div class="card-body">
+      <div class="mb-3"><label class="form-label">Title *</label><input type="text" name="title" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label">Content *</label><textarea name="content" class="form-control" rows="5" required></textarea></div>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Target Audience</label>
+          <select name="target_audience" class="form-select">{% for t in ['all','students','teachers','parents','staff'] %}<option value="{{ t }}">{{ t | title }}</option>{% endfor %}</select>
+        </div>
+        <div class="col-md-6"><label class="form-label">Priority</label>
+          <select name="priority" class="form-select">{% for p in ['normal','low','high','urgent'] %}<option value="{{ p }}">{{ p | title }}</option>{% endfor %}</select>
+        </div>
+      </div>
+      <div class="form-check mt-3"><input type="checkbox" name="is_published" id="pub" class="form-check-input" checked><label class="form-check-label" for="pub">Publish immediately</label></div>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Publish</button>
+      <a href="{{ url_for('admin.announcements') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</form>
+</div></div>
+{% endblock %}

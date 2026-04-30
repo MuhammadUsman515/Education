@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Academic Years{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left"><h1 class="page-title">Academic Years</h1></div>
+  <a href="{{ url_for('admin.add_academic_year') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Year</a>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Name</th><th>Start Date</th><th>End Date</th><th>Classes</th><th>Current</th></tr></thead>
+      <tbody>
+        {% for y in years %}
+        <tr>
+          <td class="fw-600">{{ y.name }}</td>
+          <td>{{ y.start_date.strftime('%b %d, %Y') }}</td>
+          <td>{{ y.end_date.strftime('%b %d, %Y') }}</td>
+          <td>{{ y.classes.count() }}</td>
+          <td>{% if y.is_current %}<span class="status-pill active">Current</span>{% else %}—{% endif %}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-muted">No academic years</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

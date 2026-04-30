@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ student.full_name }} — Attendance{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('parent.child_detail', student_id=student.id) }}">{{ student.full_name }}</a></li><li class="breadcrumb-item active">Attendance</li></ol></nav>
+    <h1 class="page-title">{{ student.full_name }} — Attendance</h1>
+  </div>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Date</th><th>Subject</th><th>Status</th><th>Remarks</th></tr></thead>
+      <tbody>
+        {% for r in records %}
+        <tr><td>{{ r.date.strftime('%A, %b %d, %Y') }}</td><td>{{ r.subject.name if r.subject else 'General' }}</td><td><span class="status-pill {{ r.status }}">{{ r.status | title }}</span></td><td class="text-muted fs-12">{{ r.remarks or '—' }}</td></tr>
+        {% else %}
+        <tr><td colspan="4" class="text-center text-muted py-4">No records</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

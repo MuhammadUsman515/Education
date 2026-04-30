@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Certificates{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Certificates</h1>
+    <p class="page-subtitle">Issue and manage student certificates</p>
+  </div>
+  <a href="{{ url_for('admin.issue_certificate') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Issue Certificate</a>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Certificate No.</th><th>Student</th><th>Type</th><th>Title</th><th>Issue Date</th><th>Year</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for c in certificates.items %}
+        <tr>
+          <td><code class="fs-12">{{ c.certificate_number }}</code></td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">{{ c.student.first_name[0] }}</div>
+              <div><div class="fw-600">{{ c.student.full_name }}</div><small class="text-muted">{{ c.student.student_id }}</small></div>
+            </div>
+          </td>
+          <td><span class="badge badge-secondary">{{ c.certificate_type | title }}</span></td>
+          <td class="fw-600">{{ c.title }}</td>
+          <td>{{ c.issue_date.strftime('%b %d, %Y') if c.issue_date else '—' }}</td>
+          <td>{{ c.academic_year or '—' }}</td>
+          <td><span class="status-pill {{ c.status }}">{{ c.status | title }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7"><div class="empty-state"><div class="empty-icon"><i class="fas fa-certificate"></i></div><h5>No certificates issued</h5><a href="{{ url_for('admin.issue_certificate') }}" class="btn btn-primary btn-sm mt-2">Issue First Certificate</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

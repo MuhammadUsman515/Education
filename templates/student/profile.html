@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">My Profile</h1></div></div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="profile-card">
+      <div class="profile-card-header">
+        <div class="profile-avatar">{{ student.first_name[0] }}</div>
+        <h4>{{ student.full_name }}</h4>
+        <p>{{ student.current_class.full_name if student.current_class else '' }}</p>
+      </div>
+      <div class="profile-card-body">
+        <div class="info-row"><span class="info-label">Student ID</span><span class="info-value fw-600"><code>{{ student.student_id }}</code></span></div>
+        <div class="info-row"><span class="info-label">Admission No.</span><span class="info-value">{{ student.admission_number or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Enrolled</span><span class="info-value">{{ student.enrollment_date.strftime('%b %Y') if student.enrollment_date else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="status-pill {{ student.status }}">{{ student.status | title }}</span></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-info-circle me-2 text-primary"></i>Personal Information</h5></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Full Name</span><span class="info-value">{{ student.full_name }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Gender</span><span class="info-value">{{ student.gender or '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Date of Birth</span><span class="info-value">{{ student.date_of_birth.strftime('%b %d, %Y') if student.date_of_birth else '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Age</span><span class="info-value">{{ student.age or '—' }} years</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Blood Group</span><span class="info-value">{{ student.blood_group or '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Nationality</span><span class="info-value">{{ student.nationality or '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ student.phone or '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ student.email or '—' }}</span></div></div>
+          <div class="col-12"><div class="info-row"><span class="info-label">Address</span><span class="info-value">{{ student.address or '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Parent</span><span class="info-value">{{ student.parent.full_name if student.parent else '—' }}</span></div></div>
+          <div class="col-md-6"><div class="info-row"><span class="info-label">Parent Phone</span><span class="info-value">{{ student.parent.phone if student.parent else '—' }}</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

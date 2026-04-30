@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">Mark Attendance</h1></div></div>
+
+<!-- Subject & Date Selector -->
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="GET" class="d-flex gap-3 align-items-end flex-wrap">
+      <div>
+        <label class="form-label">Subject</label>
+        <select name="subject_id" id="subject_filter" class="form-select" style="width:240px">
+          <option value="">Select subject</option>
+          {% for s in subjects %}<option value="{{ s.id }}" {{ 'selected' if selected_subject and selected_subject.id == s.id }}>{{ s.name }} ({{ s.class_.full_name if s.class_ else '—' }})</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Date</label>
+        <input type="date" name="date" class="form-control" value="{{ selected_date }}" style="width:180px">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-filter me-1"></i>Load</button>
+    </form>
+  </div>
+</div>
+
+{% if selected_subject and students %}
+<form method="POST">
+  <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
+  <input type="hidden" name="date" value="{{ selected_date }}">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title"><i class="fas fa-calendar-check me-2 text-success"></i>{{ selected_subject.name }} — {{ selected_date }}</h5>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-light btn-sm" onclick="markAll('present')">All Present</button>
+        <button type="button" class="btn btn-light btn-sm" onclick="markAll('absent')">All Absent</button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead><tr><th>#</th><th>Student</th><th>Status</th><th>Remarks</th></tr></thead>
+        <tbody>
+          {% for s in students %}
+          {% set r = existing.get(s.id) %}
+          <tr>
+            <td class="text-muted">{{ loop.index }}</td>
+            <td><div class="d-flex align-items-center gap-2"><div class="avatar avatar-sm">{{ s.first_name[0] }}</div><div><div class="fw-600">{{ s.full_name }}</div><small class="text-muted">{{ s.student_id }}</small></div></div></td>
+            <td>
+              <select name="status_{{ s.id }}" class="form-select form-select-sm status-select" style="width:120px">
+                {% for st in ['present','absent','late','excused'] %}
+                <option value="{{ st }}" {{ 'selected' if r and r.status==st else ('selected' if st=='present' and not r) }}>{{ st | title }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td><input type="text" name="remarks_{{ s.id }}" class="form-control form-control-sm" placeholder="Optional" value="{{ r.remarks if r else '' }}" style="width:180px"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button type="submit" class="btn btn-success"><i class="fas fa-save me-2"></i>Save Attendance</button>
+      <a href="{{ url_for('teacher.attendance') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</form>
+{% elif selected_subject %}
+<div class="empty-state"><div class="empty-icon"><i class="fas fa-users"></i></div><h5>No students in this class</h5></div>
+{% else %}
+<div class="empty-state"><div class="empty-icon"><i class="fas fa-calendar-check"></i></div><h5>Select a subject and date to mark attendance</h5></div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+function markAll(status) {
+  document.querySelectorAll('.status-select').forEach(sel => sel.value = status);
+}
+</script>
+{% endblock %}

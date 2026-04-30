@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Reports & Exports</h1>
+    <p class="page-subtitle">Download comprehensive reports for all modules</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  {% set report_cards = [
+    ('fas fa-user-graduate','linear-gradient(135deg,#4f46e5,#818cf8)','Student Report','Export complete list of active students with class, parent, and enrollment info.',url_for('admin.export_students'),'Export Students CSV'),
+    ('fas fa-dollar-sign','linear-gradient(135deg,#10b981,#34d399)','Fee Report','Export all fee payment records with receipt numbers and payment details.',url_for('admin.export_fees'),'Export Fees CSV'),
+    ('fas fa-money-check-alt','linear-gradient(135deg,#f59e0b,#fbbf24)','Payroll Report','Export current month payroll for all active employees.',url_for('hr.export_payroll'),'Export Payroll CSV'),
+  ] %}
+  {% for icon, gradient, title, desc, export_url, btn_label in report_cards %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div style="width:50px;height:50px;border-radius:14px;background:{{ gradient }};display:flex;align-items:center;justify-content:center;font-size:20px;color:white">
+            <i class="{{ icon }}"></i>
+          </div>
+          <div>
+            <h5 class="mb-0" style="font-size:15px;font-weight:700">{{ title }}</h5>
+          </div>
+        </div>
+        <p class="text-muted fs-13 flex-fill">{{ desc }}</p>
+        <a href="{{ export_url }}" class="btn btn-outline-primary btn-sm mt-2">
+          <i class="fas fa-download me-2"></i>{{ btn_label }}
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- Quick Stats Cards -->
+  <div class="col-12 mt-2">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-chart-bar me-2 text-primary"></i>Quick Links</h5></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3"><a href="{{ url_for('admin.students') }}" class="btn btn-light w-100 text-start"><i class="fas fa-user-graduate me-2 text-primary"></i>All Students</a></div>
+          <div class="col-md-3"><a href="{{ url_for('admin.teachers') }}" class="btn btn-light w-100 text-start"><i class="fas fa-chalkboard-teacher me-2 text-info"></i>All Teachers</a></div>
+          <div class="col-md-3"><a href="{{ url_for('admin.exams') }}" class="btn btn-light w-100 text-start"><i class="fas fa-file-alt me-2 text-warning"></i>All Exams</a></div>
+          <div class="col-md-3"><a href="{{ url_for('admin.certificates') }}" class="btn btn-light w-100 text-start"><i class="fas fa-certificate me-2 text-success"></i>Certificates</a></div>
+          <div class="col-md-3"><a href="{{ url_for('admin.fees') }}" class="btn btn-light w-100 text-start"><i class="fas fa-dollar-sign me-2 text-success"></i>Fee Payments</a></div>
+          <div class="col-md-3"><a href="{{ url_for('hr.employees') }}" class="btn btn-light w-100 text-start"><i class="fas fa-id-card me-2 text-danger"></i>HR Employees</a></div>
+          <div class="col-md-3"><a href="{{ url_for('hr.leaves') }}" class="btn btn-light w-100 text-start"><i class="fas fa-calendar-minus me-2 text-danger"></i>Leave Requests</a></div>
+          <div class="col-md-3"><a href="{{ url_for('hr.payroll') }}" class="btn btn-light w-100 text-start"><i class="fas fa-money-check-alt me-2 text-warning"></i>Payroll Records</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

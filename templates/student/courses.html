@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}My Courses{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">My Courses</h1>
+    <p class="page-subtitle">{{ student.current_class.full_name if student.current_class else 'No class' }} · {{ subjects|length }} subjects</p>
+  </div>
+</div>
+<div class="row g-4">
+  {% for s in subjects %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon primary" style="width:44px;height:44px;font-size:18px"><i class="fas fa-book-open"></i></div>
+          <div>
+            <h6 class="fw-700 mb-0">{{ s.name }}</h6>
+            <small class="text-muted"><code>{{ s.code }}</code></small>
+          </div>
+        </div>
+        {% if s.description %}<p class="text-muted fs-13 mb-3">{{ s.description }}</p>{% endif %}
+        <div class="info-row"><span class="info-label">Teacher</span><span class="info-value">{{ s.teacher.full_name if s.teacher else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Credits</span><span class="info-value">{{ s.credit_hours }}</span></div>
+        <div class="info-row"><span class="info-label">Type</span><span class="info-value"><span class="badge {{ 'badge-warning' if s.is_elective else 'badge-primary' }}">{{ 'Elective' if s.is_elective else 'Core' }}</span></span></div>
+        <div class="info-row"><span class="info-label">Attendance</span>
+          <span class="info-value">
+            {% set pct = student.attendance_percentage(s.id) %}
+            <span class="{{ 'text-success' if pct>=75 else 'text-danger' }} fw-600">{{ pct }}%</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="empty-state"><div class="empty-icon"><i class="fas fa-book-open"></i></div><h5>No courses assigned yet</h5></div></div>
+  {% endfor %}
+</div>
+{% endblock %}

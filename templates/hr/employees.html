@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Employees{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left"><h1 class="page-title">Employees</h1><p class="page-subtitle">{{ employees.total }} total employees</p></div>
+  <a href="{{ url_for('hr.add_employee') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Employee</a>
+</div>
+<div class="filter-bar">
+  <form method="GET" class="d-flex align-items-center gap-3 flex-wrap w-100">
+    <div class="search-input flex-fill"><i class="fas fa-search search-icon"></i><input type="text" name="search" class="form-control" placeholder="Search employee…" value="{{ search }}"></div>
+    <select name="dept_id" class="form-select" style="width:180px" onchange="this.form.submit()"><option value="">All Departments</option>{% for d in departments %}<option value="{{ d.id }}" {{ 'selected' if dept_filter|string==d.id|string }}>{{ d.name }}</option>{% endfor %}</select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    {% if search or dept_filter %}<a href="{{ url_for('hr.employees') }}" class="btn btn-light btn-sm">Clear</a>{% endif %}
+  </form>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Employee</th><th>ID</th><th>Department</th><th>Designation</th><th>Type</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for e in employees.items %}
+        <tr>
+          <td><div class="d-flex align-items-center gap-2"><div class="avatar avatar-sm" style="background:linear-gradient(135deg,#ef4444,#f87171)">{{ e.first_name[0] }}</div><div><div class="fw-600">{{ e.full_name }}</div><small class="text-muted">{{ e.email or '—' }}</small></div></div></td>
+          <td><code class="fs-12">{{ e.employee_id }}</code></td>
+          <td>{{ e.department.name if e.department else '—' }}</td>
+          <td>{{ e.designation or '—' }}</td>
+          <td><span class="badge badge-secondary">{{ e.employment_type | title }}</span></td>
+          <td class="fw-600">${{ '{:,.0f}'.format(e.basic_salary) }}</td>
+          <td><span class="status-pill {{ e.status }}">{{ e.status | title }}</span></td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{{ url_for('hr.employee_detail', emp_id=e.id) }}" class="btn btn-light btn-icon btn-sm"><i class="fas fa-eye"></i></a>
+              <a href="{{ url_for('hr.edit_employee', emp_id=e.id) }}" class="btn btn-light btn-icon btn-sm"><i class="fas fa-edit"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="fas fa-id-card"></i></div><h5>No employees found</h5></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Edit' if teacher else 'Add' }} Teacher{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('admin.teachers') }}">Teachers</a></li><li class="breadcrumb-item active">{{ 'Edit' if teacher else 'New' }}</li></ol></nav>
+    <h1 class="page-title">{{ 'Edit Teacher' if teacher else 'Add New Teacher' }}</h1>
+  </div>
+</div>
+<form method="POST">
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-user me-2 text-info"></i>Teacher Information</h5></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">First Name *</label><input type="text" name="first_name" class="form-control" required value="{{ teacher.first_name if teacher else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Last Name *</label><input type="text" name="last_name" class="form-control" required value="{{ teacher.last_name if teacher else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Date of Birth</label><input type="date" name="date_of_birth" class="form-control" value="{{ teacher.date_of_birth.strftime('%Y-%m-%d') if teacher and teacher.date_of_birth else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Gender</label><select name="gender" class="form-select"><option value="">Select</option>{% for g in ['Male','Female','Other'] %}<option value="{{ g }}" {{ 'selected' if teacher and teacher.gender == g }}>{{ g }}</option>{% endfor %}</select></div>
+          <div class="col-md-6"><label class="form-label">Phone</label><input type="tel" name="phone" class="form-control" value="{{ teacher.phone if teacher else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ teacher.email if teacher else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Qualification</label><input type="text" name="qualification" class="form-control" placeholder="e.g. M.Sc Mathematics" value="{{ teacher.qualification if teacher else '' }}"></div>
+          <div class="col-md-6"><label class="form-label">Specialization</label><input type="text" name="specialization" class="form-control" value="{{ teacher.specialization if teacher else '' }}"></div>
+          <div class="col-12"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2">{{ teacher.address if teacher else '' }}</textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-briefcase me-2 text-success"></i>Employment</h5></div>
+      <div class="card-body">
+        <div class="mb-3"><label class="form-label">Teacher ID *</label><input type="text" name="teacher_id" class="form-control" required value="{{ teacher.teacher_id if teacher else '' }}" {{ 'readonly' if teacher }}></div>
+        <div class="mb-3"><label class="form-label">Department</label><select name="department_id" class="form-select"><option value="">None</option>{% for d in departments %}<option value="{{ d.id }}" {{ 'selected' if teacher and teacher.department_id == d.id }}>{{ d.name }}</option>{% endfor %}</select></div>
+        <div class="mb-3"><label class="form-label">Joining Date</label><input type="date" name="joining_date" class="form-control" value="{{ teacher.joining_date.strftime('%Y-%m-%d') if teacher and teacher.joining_date else '' }}"></div>
+        <div class="mb-3"><label class="form-label">Salary ($)</label><input type="number" name="salary" class="form-control" step="0.01" value="{{ teacher.salary if teacher else '' }}"></div>
+        <div class="mb-3"><label class="form-label">Experience (years)</label><input type="number" name="experience_years" class="form-control" value="{{ teacher.experience_years if teacher else 0 }}"></div>
+        {% if teacher %}<div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select">{% for s in ['active','inactive','terminated'] %}<option value="{{ s }}" {{ 'selected' if teacher.status==s }}>{{ s | title }}</option>{% endfor %}</select></div>
+        {% else %}<div class="mb-3"><label class="form-label">Password</label><input type="password" name="password" class="form-control" value="teacher123"></div>{% endif %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-fill"><i class="fas fa-save me-2"></i>{{ 'Update' if teacher else 'Add Teacher' }}</button>
+      <a href="{{ url_for('admin.teachers') }}" class="btn btn-light">Cancel</a>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}

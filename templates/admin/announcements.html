@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Announcements</h1>
+    <p class="page-subtitle">Publish notices for students, teachers, and parents</p>
+  </div>
+  <a href="{{ url_for('admin.add_announcement') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Announcement</a>
+</div>
+<div class="row g-3">
+  {% for ann in announcements %}
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between gap-3">
+          <div class="d-flex align-items-start gap-3 flex-fill">
+            <div style="width:10px;height:10px;border-radius:50%;background:{{ '#ef4444' if ann.priority=='urgent' else '#f59e0b' if ann.priority=='high' else '#10b981' }};margin-top:5px;flex-shrink:0"></div>
+            <div class="flex-fill">
+              <h6 class="fw-700 mb-1">{{ ann.title }}</h6>
+              <p class="text-muted fs-13 mb-2">{{ ann.content[:200] }}{% if ann.content|length > 200 %}…{% endif %}</p>
+              <div class="d-flex gap-3 fs-12 text-muted">
+                <span><i class="fas fa-users me-1"></i>{{ ann.target_audience | title }}</span>
+                <span><i class="fas fa-flag me-1"></i>{{ ann.priority | title }}</span>
+                <span><i class="fas fa-clock me-1"></i>{{ ann.created_at.strftime('%b %d, %Y at %H:%M') }}</span>
+              </div>
+            </div>
+          </div>
+          <span class="status-pill {{ 'active' if ann.is_published else 'inactive' }}">{{ 'Published' if ann.is_published else 'Draft' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="empty-state"><div class="empty-icon"><i class="fas fa-bullhorn"></i></div><h5>No announcements yet</h5><a href="{{ url_for('admin.add_announcement') }}" class="btn btn-primary btn-sm mt-2">Create Announcement</a></div></div>
+  {% endfor %}
+</div>
+{% endblock %}

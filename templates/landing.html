@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduManage Pro — Premium Education Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <style>
+    body { background: white; }
+    .stats-section { background: linear-gradient(135deg, #1e293b, #0f172a); }
+    .portal-card { cursor: pointer; }
+    .portal-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
+    .section-badge { background: #e0e7ff; color: #4f46e5; font-size: 12px; font-weight: 700; padding: 4px 14px; border-radius: 20px; display: inline-block; margin-bottom: 12px; letter-spacing: .5px; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="landing-nav navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#4f46e5,#06b6d4);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <span style="font-weight:800;font-size:18px;color:#1e293b">EduManage <span style="color:#4f46e5">Pro</span></span>
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-2">
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#portals">Portals</a></li>
+        <li class="nav-item"><a class="nav-link" href="#stats">Overview</a></li>
+        <li class="nav-item">
+          <a href="{{ url_for('auth.login') }}" class="btn btn-primary px-4">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero-section">
+  <div class="container py-5">
+    <div class="row align-items-center py-5">
+      <div class="col-lg-6 hero-content">
+        <div class="section-badge" style="background:rgba(255,255,255,.15);color:white">
+          <i class="fas fa-star me-1"></i> Premium Education Platform
+        </div>
+        <h1 class="hero-title">
+          Manage Your<br><span>Institution</span><br>Effortlessly
+        </h1>
+        <p class="hero-subtitle">
+          A comprehensive school &amp; college management system with powerful tools for students, teachers, parents, admins, and HR — all in one beautiful platform.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{{ url_for('auth.login') }}" class="btn btn-lg" style="background:white;color:#4f46e5;font-weight:700;padding:14px 28px">
+            <i class="fas fa-rocket me-2"></i>Get Started
+          </a>
+          <a href="#portals" class="btn btn-lg" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);padding:14px 28px">
+            <i class="fas fa-eye me-2"></i>Explore Portals
+          </a>
+        </div>
+        <div class="d-flex gap-4 mt-4 flex-wrap">
+          <div style="color:rgba(255,255,255,.8);font-size:13px"><i class="fas fa-check-circle me-1" style="color:#10b981"></i>Free Demo Available</div>
+          <div style="color:rgba(255,255,255,.8);font-size:13px"><i class="fas fa-check-circle me-1" style="color:#10b981"></i>No Credit Card</div>
+          <div style="color:rgba(255,255,255,.8);font-size:13px"><i class="fas fa-check-circle me-1" style="color:#10b981"></i>All Roles Included</div>
+        </div>
+      </div>
+      <div class="col-lg-6 mt-5 mt-lg-0 d-none d-lg-block">
+        <div class="position-relative">
+          <!-- Mock dashboard preview -->
+          <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:24px">
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <div style="width:12px;height:12px;border-radius:50%;background:#ef4444"></div>
+              <div style="width:12px;height:12px;border-radius:50%;background:#f59e0b"></div>
+              <div style="width:12px;height:12px;border-radius:50%;background:#10b981"></div>
+              <span style="margin-left:8px;color:rgba(255,255,255,.6);font-size:12px">Admin Dashboard</span>
+            </div>
+            <div class="row g-3">
+              <div class="col-6">
+                <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:16px">
+                  <div style="font-size:24px;font-weight:800;color:white">1,248</div>
+                  <div style="color:rgba(255,255,255,.6);font-size:12px">Active Students</div>
+                  <div style="color:#10b981;font-size:11px;margin-top:4px"><i class="fas fa-arrow-up"></i> +12%</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:16px">
+                  <div style="font-size:24px;font-weight:800;color:white">86</div>
+                  <div style="color:rgba(255,255,255,.6);font-size:12px">Teachers</div>
+                  <div style="color:#10b981;font-size:11px;margin-top:4px"><i class="fas fa-arrow-up"></i> +3%</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:16px">
+                  <div style="font-size:24px;font-weight:800;color:white">$48K</div>
+                  <div style="color:rgba(255,255,255,.6);font-size:12px">Monthly Revenue</div>
+                  <div style="color:#10b981;font-size:11px;margin-top:4px"><i class="fas fa-arrow-up"></i> +8%</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:16px">
+                  <div style="font-size:24px;font-weight:800;color:white">94%</div>
+                  <div style="color:rgba(255,255,255,.6);font-size:12px">Attendance Rate</div>
+                  <div style="color:#f59e0b;font-size:11px;margin-top:4px"><i class="fas fa-minus"></i> stable</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats-section py-5" id="stats">
+  <div class="container py-3">
+    <div class="row g-4 text-center text-white">
+      <div class="col-6 col-md-3">
+        <div style="font-size:40px;font-weight:800;color:#a5b4fc">5</div>
+        <div style="color:#94a3b8;font-size:13px;margin-top:4px">Portals</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div style="font-size:40px;font-weight:800;color:#6ee7b7">50+</div>
+        <div style="color:#94a3b8;font-size:13px;margin-top:4px">Features</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div style="font-size:40px;font-weight:800;color:#fde68a">100%</div>
+        <div style="color:#94a3b8;font-size:13px;margin-top:4px">Responsive</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div style="font-size:40px;font-weight:800;color:#f9a8d4">∞</div>
+        <div style="color:#94a3b8;font-size:13px;margin-top:4px">Scalable</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="py-6 py-5 bg-white" id="features">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <div class="section-badge">Features</div>
+      <h2 style="font-size:36px;font-weight:800;color:#1e293b">Everything You Need</h2>
+      <p class="text-muted mx-auto" style="max-width:560px;font-size:16px">Comprehensive tools for every aspect of educational institution management.</p>
+    </div>
+    <div class="row g-4">
+      {% set features = [
+        ('fas fa-user-graduate','#4f46e5','#e0e7ff','Student Management','Complete student lifecycle from admission to graduation with profiles, attendance, and academic tracking.'),
+        ('fas fa-chalkboard-teacher','#06b6d4','#cffafe','Teacher Management','Manage teacher profiles, subjects, schedules, and performance all in one place.'),
+        ('fas fa-file-alt','#10b981','#d1fae5','Exam Management','Schedule exams, enter grades, auto-calculate GPA, and generate comprehensive result reports.'),
+        ('fas fa-dollar-sign','#f59e0b','#fef3c7','Fee Management','Flexible fee structures, collection, receipts, and financial reporting with export functionality.'),
+        ('fas fa-certificate','#8b5cf6','#ede9fe','Certificate Generation','Issue completion, merit, and participation certificates with professional formatting.'),
+        ('fas fa-id-card','#ef4444','#fee2e2','HR & Payroll','Complete HR management with employee records, leave tracking, and automated payroll processing.'),
+        ('fas fa-calendar-check','#ec4899','#fce7f3','Attendance Tracking','Subject-wise attendance marking with percentage calculation and parent notifications.'),
+        ('fas fa-chart-bar','#0ea5e9','#e0f2fe','Reports & Analytics','Export student, fee, and payroll data to CSV. Visual charts and detailed analytics dashboards.'),
+      ] %}
+      {% for icon, color, bg, title, desc in features %}
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:{{ bg }};color:{{ color }}"><i class="{{ icon }}"></i></div>
+          <h5 style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:8px">{{ title }}</h5>
+          <p class="text-muted" style="font-size:13px;margin:0">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Portals -->
+<section class="py-5 bg-light" id="portals">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <div class="section-badge">Portals</div>
+      <h2 style="font-size:36px;font-weight:800;color:#1e293b">Five Dedicated Portals</h2>
+      <p class="text-muted mx-auto" style="max-width:560px;font-size:16px">Role-based access ensures everyone sees exactly what they need.</p>
+    </div>
+    <div class="row g-4">
+      {% set portals = [
+        ('fas fa-user-shield','linear-gradient(135deg,#4f46e5,#818cf8)','Admin Portal','Full system control with student/teacher management, finance, HR, reports, and system settings.','admin'),
+        ('fas fa-user-graduate','linear-gradient(135deg,#10b981,#34d399)','Student Portal','Access courses, view grades, track attendance, pay fees, and download certificates.','student'),
+        ('fas fa-chalkboard-teacher','linear-gradient(135deg,#06b6d4,#22d3ee)','Teacher Portal','Manage classes, mark attendance, create exams, enter grades, and view timetable.','teacher'),
+        ('fas fa-users','linear-gradient(135deg,#f59e0b,#fbbf24)','Parent Portal','Monitor children\'s academics, attendance, grades, fee status, and upcoming exams.','parent'),
+        ('fas fa-id-card','linear-gradient(135deg,#ef4444,#f87171)','HR Portal','Employee management, leave approval, payroll processing, and department oversight.','hr'),
+      ] %}
+      {% for icon, gradient, title, desc, role in portals %}
+      <div class="col-md-6 col-lg-4">
+        <div class="feature-card portal-card" onclick="window.location='{{ url_for('auth.login') }}'">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div style="width:52px;height:52px;border-radius:14px;background:{{ gradient }};display:flex;align-items:center;justify-content:center;font-size:22px;color:white;flex-shrink:0">
+              <i class="{{ icon }}"></i>
+            </div>
+            <div>
+              <h5 style="font-size:16px;font-weight:700;margin:0;color:#1e293b">{{ title }}</h5>
+              <span class="badge-secondary badge" style="margin-top:4px">{{ role | title }}</span>
+            </div>
+          </div>
+          <p class="text-muted" style="font-size:13px;margin:0;line-height:1.7">{{ desc }}</p>
+          <div class="mt-3">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-sm">
+              Access Portal <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:linear-gradient(135deg,#4f46e5,#06b6d4);padding:80px 0">
+  <div class="container text-center">
+    <h2 style="font-size:36px;font-weight:800;color:white;margin-bottom:16px">Ready to Get Started?</h2>
+    <p style="color:rgba(255,255,255,.8);font-size:16px;margin-bottom:32px">Login with demo credentials to explore all portals.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-lg" style="background:white;color:#4f46e5;font-weight:700;padding:14px 32px">
+        <i class="fas fa-sign-in-alt me-2"></i>Login Now
+      </a>
+    </div>
+    <div class="mt-4" style="color:rgba(255,255,255,.7);font-size:13px">
+      <strong>Demo Credentials:</strong>
+      admin / admin123 &nbsp;|&nbsp; student001 / student123 &nbsp;|&nbsp; teacher001 / teacher123
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="background:#1e293b;padding:40px 0">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <div style="width:32px;height:32px;background:linear-gradient(135deg,#4f46e5,#06b6d4);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <span style="font-weight:800;color:white;font-size:16px">EduManage Pro</span>
+        </div>
+        <p style="color:#64748b;font-size:13px;margin:0">Premium Education Management System</p>
+      </div>
+      <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <p style="color:#475569;font-size:13px;margin:0">© 2024 EduManage Pro. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

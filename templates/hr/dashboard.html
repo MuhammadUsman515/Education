@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}HR Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">HR Dashboard</h1>
+    <p class="page-subtitle">Human Resources management overview</p>
+  </div>
+  <a href="{{ url_for('hr.add_employee') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Employee</a>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card primary"><div class="stat-icon primary"><i class="fas fa-id-card"></i></div><div class="stat-number" data-target="{{ stats.total_employees }}">{{ stats.total_employees }}</div><div class="stat-label">Active Employees</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card warning"><div class="stat-icon warning"><i class="fas fa-calendar-minus"></i></div><div class="stat-number" data-target="{{ stats.pending_leaves }}">{{ stats.pending_leaves }}</div><div class="stat-label">Pending Leaves</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card info"><div class="stat-icon info"><i class="fas fa-sitemap"></i></div><div class="stat-number" data-target="{{ stats.departments }}">{{ stats.departments }}</div><div class="stat-label">Departments</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card success"><div class="stat-icon success"><i class="fas fa-dollar-sign"></i></div><div class="stat-number">${{ '{:,.0f}'.format(monthly_payroll) }}</div><div class="stat-label">This Month Payroll</div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card mb-4">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-calendar-minus me-2 text-warning"></i>Pending Leave Requests</h5><a href="{{ url_for('hr.leaves') }}" class="btn btn-light btn-sm">All Leaves</a></div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Employee</th><th>Type</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% for l in pending_leaves %}
+            <tr>
+              <td><div class="d-flex align-items-center gap-2"><div class="avatar avatar-sm">{{ l.employee.first_name[0] }}</div><div class="fw-600">{{ l.employee.full_name }}</div></div></td>
+              <td><span class="badge badge-secondary">{{ l.leave_type | title }}</span></td>
+              <td class="fs-12">{{ l.start_date.strftime('%b %d') }} – {{ l.end_date.strftime('%b %d, %Y') }}</td>
+              <td><span class="status-pill pending">Pending</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('hr.action_leave', leave_id=l.id) }}" class="d-inline">
+                  <input type="hidden" name="action" value="approved">
+                  <button type="submit" class="btn btn-success btn-sm btn-icon" title="Approve"><i class="fas fa-check"></i></button>
+                </form>
+                <form method="POST" action="{{ url_for('hr.action_leave', leave_id=l.id) }}" class="d-inline">
+                  <input type="hidden" name="action" value="rejected">
+                  <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Reject"><i class="fas fa-times"></i></button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted py-3">No pending requests</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-chart-bar me-2 text-primary"></i>Department Headcount</h5></div>
+      <div class="card-body">
+        <div class="chart-container" style="height:200px"><canvas id="deptChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-user-plus me-2 text-success"></i>Recent Employees</h5><a href="{{ url_for('hr.employees') }}" class="btn btn-light btn-sm">All</a></div>
+      <div class="card-body p-0">
+        {% for emp in recent_employees %}
+        <div class="p-3 border-bottom d-flex align-items-center gap-3">
+          <div class="avatar avatar-sm">{{ emp.first_name[0] }}</div>
+          <div class="flex-fill">
+            <div class="fw-600">{{ emp.full_name }}</div>
+            <small class="text-muted">{{ emp.designation or '—' }} · {{ emp.department.name if emp.department else '—' }}</small>
+          </div>
+          <span class="status-pill active">Active</span>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4 fs-13">No employees</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const deptData = {{ dept_data | tojson }};
+new Chart(document.getElementById('deptChart'), {
+  type: 'bar',
+  data: {
+    labels: deptData.map(d => d[0]),
+    datasets: [{ label: 'Employees', data: deptData.map(d => d[1]), backgroundColor: 'rgba(79,70,229,.7)', borderRadius: 6 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+});
+</script>
+{% endblock %}

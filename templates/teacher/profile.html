@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header"><div class="page-header-left"><h1 class="page-title">My Profile</h1></div></div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="profile-card">
+      <div class="profile-card-header" style="background:linear-gradient(135deg,#0f172a,#0891b2,#06b6d4)">
+        <div class="profile-avatar">{{ teacher.first_name[0] }}</div>
+        <h4>{{ teacher.full_name }}</h4>
+        <p>{{ teacher.department.name if teacher.department else 'Teacher' }}</p>
+      </div>
+      <div class="profile-card-body">
+        <div class="info-row"><span class="info-label">Teacher ID</span><span class="info-value fw-600"><code>{{ teacher.teacher_id }}</code></span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ teacher.email or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value">{{ teacher.phone or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Gender</span><span class="info-value">{{ teacher.gender or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Qualification</span><span class="info-value">{{ teacher.qualification or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Specialization</span><span class="info-value">{{ teacher.specialization or '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Experience</span><span class="info-value">{{ teacher.experience_years }} years</span></div>
+        <div class="info-row"><span class="info-label">Joined</span><span class="info-value">{{ teacher.joining_date.strftime('%b %d, %Y') if teacher.joining_date else '—' }}</span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="status-pill {{ teacher.status }}">{{ teacher.status | title }}</span></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h5 class="card-title"><i class="fas fa-book me-2 text-primary"></i>My Subjects ({{ teacher.subjects.count() }})</h5></div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Subject</th><th>Code</th><th>Class</th><th>Credits</th></tr></thead>
+          <tbody>
+            {% for s in teacher.subjects.all() %}
+            <tr><td class="fw-600">{{ s.name }}</td><td><code>{{ s.code }}</code></td><td>{{ s.class_.full_name if s.class_ else '—' }}</td><td>{{ s.credit_hours }}</td></tr>
+            {% else %}<tr><td colspan="4" class="text-center text-muted">No subjects</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
